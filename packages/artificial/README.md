@@ -6,7 +6,7 @@ A Meteor game development library written in CoffeeScript.
 
 ### Artificial Base
 
-_The app foundation_
+_The app framework_
 
 Tying all the pieces of your app together can be a hassle. Running an update and draw loop should be unified.
 Services need to be shared, components integrated. Artificial Base (AB) gives you the basic framework.
