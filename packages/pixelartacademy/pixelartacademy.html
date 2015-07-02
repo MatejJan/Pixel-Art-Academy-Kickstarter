@@ -1,0 +1,20 @@
+<head>
+  <title>Retronator Pixel Art Academy</title>
+  <link rel="icon" href="/favicon.png" />
+</head>
+
+<body>
+  {{> PixelArtAcademy pixelArtAcademy}}
+</body>
+
+<template name="PixelArtAcademy">
+  <style>
+    body {
+      font-size: {{fontSize}}%
+    }
+  </style>
+
+  {{#each components}}
+    {{> renderComponent}}
+  {{/each}}
+</template>

@@ -1,0 +1,81 @@
+@import "nib"
+@import "../typography/typography.import"
+
+html
+body
+  min-width 480px
+  min-height 360px
+  padding 0
+  margin 0
+  background black
+  color white
+  overflow-x hidden
+
+*
+  box-sizing border-box
+
+.landing-page
+  position relative
+
+  .scene
+    position fixed
+    color black
+    background #a6e2fe
+    overflow hidden
+
+    // Hiding images until they're initialized
+    &.initializing img
+    img.initializing
+      visibility hidden
+
+    // Parallax elements
+    *[data-depth]
+      position absolute
+
+    .top-section
+      position absolute
+      z-index 2
+      text-align center
+
+      .top
+        position absolute
+        left 0
+        right 0
+        top 0
+
+        .title
+          display inline-block
+          vertical-align middle
+
+          .retronator
+            margin 0
+            line-height initial
+            retrotype()
+
+          .pixel-art-academy
+            margin 0
+            line-height initial
+            acme-9-bold()
+
+      .middle
+        position absolute
+        left 0
+        right 0
+
+      .bottom
+        position absolute
+        left 0
+        right 0
+        bottom 0
+        vertical-align middle
+        uni()
+
+    .middle-section
+      position absolute
+      z-index 1
+
+  .bottom-section
+    position relative
+    left 0
+    right 0
+    transform translateZ(0)

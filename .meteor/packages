@@ -5,5 +5,12 @@
 # but you can also edit it by hand.
 
 meteor-platform
-autopublish
-insecure
+coffeescript
+stylus
+jquery
+random
+
+artificial
+typography
+pixelartacademy
+landingpage
