@@ -4,6 +4,16 @@
 
 A Meteor game development library written in CoffeeScript.
 
+### Artificial Base
+
+_The app foundation_
+
+Tying all the pieces of your app together can be a hassle. Running an update and draw loop should be unified.
+Services need to be shared, components integrated. Artificial Base (AB) gives you the basic framework.
+
+- **App**: The root class from which to inherit your custom app.
+- **Services**: A container for loose coupling of app components.
+
 ### Artificial Everywhere
 
 _Useful bits and pieces_
@@ -23,3 +33,4 @@ into a system, specially designed to adapt to different display resolutions and 
 - **Component**: Extension of BlazeComponent with custom functionality.
 - **CSSHelper**: Helper functions for dealing with CSS.
 - **Display**: Represents the display area and provides automatic pixel art scaling calculation.
+- **Window**: The bounds of your browser window.
