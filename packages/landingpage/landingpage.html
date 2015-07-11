@@ -1,34 +1,99 @@
 <template name="PixelArtAcademy.LandingPage">
   <div class="landing-page">
-    <div class="scene {{initializingClass}}" {{style sceneStyle}}>
-      <div class="top-section" {{style topSectionStyle}}>
-        <div class="top" data-depth="1" {{style topSectionRestStyle}}>
+    <div class="scene {{initializingClass}}">
+      <div class="top-section">
+        <div class="top" data-depth="1">
           <hgroup class="title">
             <h2 class="retronator">Retronator</h2>
             <h1 class="pixel-art-academy">Pixel Art Academy</h1>
           </hgroup>
         </div>
-        <div class="middle" data-depth="1.5" {{style topSectionMiddleStyle}}>
-          <img class="coat-of-arms" src="/landingpage/academyofart/coatofarms.png" />
+        <div class="middle">
+          <div class="coat-of-arms" data-depth="1.5">
+            <img src="/landingpage/academyofart/coatofarms/layers/behind.png" />
+          </div>
+          <div class="coat-of-arms" data-depth="1.51">
+            <img src="/landingpage/academyofart/coatofarms/layers/shield.png" />
+          </div>
+          <div class="coat-of-arms" data-depth="1.52">
+            <img src="/landingpage/academyofart/coatofarms/layers/ribbon-top.png" />
+          </div>
+          <div class="coat-of-arms" data-depth="1.6">
+            <img src="/landingpage/academyofart/coatofarms/layers/tools.png" />
+          </div>
+          <div class="coat-of-arms" data-depth="1.65">
+            <img src="/landingpage/academyofart/coatofarms/layers/main-ribbon.png" />
+          </div>
         </div>
-        <div class="bottom" data-depth="1" {{style topSectionRestStyle}}>
+        <div class="bottom" data-depth="1">
           Scroll down to continue
         </div>
       </div>
 
-      <div class="middle-section" {{style middleSectionStyle}}>
-        <div class="clouds" style="top: 4px;" data-depth="0.3"><img src="/landingpage/retropolis/clouds.png"/></div>
+      <div class="middle-section">
+        <div class="clouds" style="top: 4px;" data-depth="0.36"><img src="/landingpage/retropolis/clouds.png"/></div>
         <div class="ocean" style="top: 144px;" data-depth="0.5"><img src="/landingpage/retropolis/ocean.png"/></div>
+        <div class="atol-behind" style="top: 143px;" data-depth="0.51"><img src="/landingpage/retropolis/atol-behind.png"/></div>
         <div class="behind" style="top: 23px;" data-depth="0.51"><img src="/landingpage/retropolis/behind.png"/></div>
         <div class="mid" style="top: 66px;" data-depth="0.53"><img src="/landingpage/retropolis/mid.png"/></div>
         <div class="front" style="top: 67px;" data-depth="0.55"><img src="/landingpage/retropolis/front.png"/></div>
-        <div class="atol" style="top: 143px;" data-depth="0.53"><img src="/landingpage/retropolis/atol.png"/></div>
-        <div class="foreground" style="top: 156px;" data-depth="0.8"><img src="/landingpage/retropolis/foreground.png"/></div>
-        <div class="railing" style="top: 157px;" data-depth="1"><img src="/landingpage/retropolis/railing.png"/></div>
+        <div class="atol" style="top: 144px;" data-depth="0.56"><img src="/landingpage/retropolis/atol.png"/></div>
+        <div class="spacefront-back" style="top: 124px;" data-depth="0.82"><img src="/landingpage/retropolis/spaceport-back.png"/></div>
+        <div class="spacefront-front" style="top: 119px;" data-depth="0.9"><img src="/landingpage/retropolis/spaceport-front.png"/></div>
       </div>
     </div>
 
-    <div class="bottom-section" {{style bottomSectionStyle}}>
+    <div class="bottom-section">
+      <div class="foreground"><img src="/landingpage/retropolis/foreground.png"/></div>
+
+      <div class="text-adventure">
+        <p>
+          <span class="line">You exit the Retropolis International Spaceport. A</span>
+          <span class="line">magnificent view of the city opens before you. Armed</span>
+          <span class="line">with a suitcase and a burning desire to become the</span>
+          <span class="line">best pixel artist, you feel the adventure in the air.</span>
+        </p>
+        <p>
+          <span class="line">Possible exits are:
+            <span class="action" data-action="Go to the Hyperloop station">Hyperloop station</span>,
+            <span class="action" data-action="Return to the arrivals area">Arrivals area</span>
+          </span>
+        </p>
+        <p>
+          <span class="line">You carry:</span>
+          <span class="line">- Retropolis Academy of Art <span class="action" data-action="Read acceptance letter">acceptance letter</span></span>
+          <span class="line">- <span class="action" data-action="Look at Pixelboy 2000">Pixelboy 2000</span> multi-purpose communication device</span>
+          <span class="line">- <span class="action" data-action="Put on glasses">ZX-Vision</span> augmented reality glasses</span>
+        </p>
+        <p>
+          <span class="line">What do you want to do?</span>
+        </p>
+        <p class="prompt-area">
+          <span class="line"><span class="console-sign">&gt;</span><input class="prompt"/></span>
+        </p>
+      </div>
+
+      <div class="eager-to-start">
+        <p class="part-1">Eager to start?</p>
+        <p class="part-2">So am I!</p>
+      </div>
+
+      <div class="kickstarter">
+        <p class="retronator-presents"><span class="retronator">Retronator</span> presents</p>
+        <p class="title">Pixel Art Academy<span class="author">by Matej 'Retro' Jan</span></p>
+        <p class="tagline">
+          A role-playing adventure game<br/>
+          with real-life consequences.
+        </p>
+        <p class="kickstarter">Coming to Kickstarter in August 2015!</p>
+        <form class="mailing-list" action="https://tinyletter.com/retronator" method="post" target="popupwindow" onsubmit="window.open('https://tinyletter.com/retronator', 'popupwindow', 'scrollbars=yes,width=800,height=600');return true">
+          <p>Be notified:
+            <input class="input" type="text" name="email" id="tlemail" placeholder="your email" />
+          <input type="hidden" value="1" name="embed"/>
+            <input class="submit" type="submit" value="OK" />
+          </p>
+        </form>
+      </div>
     </div>
   </div>
 </template>

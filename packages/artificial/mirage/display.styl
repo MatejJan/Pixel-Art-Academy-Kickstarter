@@ -1,21 +1,18 @@
+@import "nib"
 @import "debugfont.import"
 
 debug-rendering = false
 
 .am-display
-  position fixed
-  top 0
-  bottom 0
-  left 0
-  right 0
   debug-font()
 
   *
     box-sizing border-box
 
   .crop-bar
-    position absolute
+    position fixed
     background black
+    transform translateZ(0)
 
     &.top-crop-bar
       top 0
@@ -30,19 +27,20 @@ debug-rendering = false
     &.left-crop-bar
       top 0
       bottom 0
-      right 0
+      left 0
 
     &.right-crop-bar
       top 0
       bottom 0
-      left 0
+      right 0
 
   .viewport-bounds
-    position absolute
+    position fixed
     display none unless debug-rendering
     border 2px solid firebrick
     color firebrick
     pointer-events none
+    z-index 9999
 
     .scale
       position absolute

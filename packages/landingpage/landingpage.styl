@@ -1,6 +1,12 @@
 @import "nib"
 @import "../typography/typography.import"
 
+white = #eee
+lighter-grey = #dedede
+light-grey = #cacaca
+grey = #b2b2b2
+dark-grey = #929292
+
 html
 body
   min-width 480px
@@ -10,12 +16,28 @@ body
   background black
   color white
   overflow-x hidden
-
+  // We know that the page will need to scroll, so we force it
+  // here for the measurements on the first go to accomodate it.
+  overflow-y scroll
 *
   box-sizing border-box
 
 .landing-page
   position relative
+
+  // Link style
+  .action
+  a
+    position relative
+    padding 0 0.1em 0 0.2em
+    margin 0 -0.1em 0 -0.2em
+    color white
+    cursor pointer
+    text-decoration none
+
+    &:hover
+      background-color white
+      color black
 
   .scene
     position fixed
@@ -39,6 +61,7 @@ body
 
       .top
         position absolute
+        z-index 1
         left 0
         right 0
         top 0
@@ -64,6 +87,7 @@ body
 
       .bottom
         position absolute
+        z-index 1
         left 0
         right 0
         bottom 0
@@ -75,7 +99,138 @@ body
       z-index 1
 
   .bottom-section
-    position relative
-    left 0
-    right 0
+    position fixed
     transform translateZ(0)
+    background black
+    uni()
+    color grey
+
+    .foreground
+      position absolute
+      left 0
+      // Prevent gap on mobile
+      top 1px
+
+      img
+        position absolute
+        left 0
+        bottom 0
+
+    .text-adventure
+      overflow hidden
+      height 100%
+
+      .line
+        display block
+
+      .prompt-area
+        position relative
+        height 100%
+        cursor text
+        white-space nowrap
+
+        .console-sign
+          position absolute
+          left 0
+          top 0
+
+        .prompt
+          width 100%
+          font inherit
+          color inherit
+          background none
+          border none
+          padding 0 0 0 1em
+          text-transform uppercase
+
+          &:focus
+            outline none
+
+    .eager-to-start
+      position absolute
+      display none
+      top 50%
+      left 0
+      right 0
+      margin-top -4.2em
+      text-align center
+
+      p
+        opacity 0
+
+    .kickstarter
+      display none
+      opacity 0
+      text-align center
+      color dark-grey
+
+      .retronator-presents
+        margin 0
+
+        .retronator
+          retrotype()
+          color light-grey
+          font-size 1.5em
+
+      .title
+        position relative
+        acme-9-bold()
+        display inline-block
+        margin 0.33333em 0 0.666667em
+        color white
+        font-size 1.5em
+
+        .author
+          position absolute
+          right 1.6em
+          bottom -0.5em
+          uni()
+          color dark-grey
+          font-size 0.66666667em
+
+      .kickstarter
+        color light-grey
+        text-transform uppercase
+        margin 2em 0
+
+      .mailing-list
+        input:focus
+          outline none
+
+        .input
+          display inline-block
+          width 13em
+          border none
+          border-top 0.125em solid dark-grey
+          border-radius 0
+          padding 0 0.125em 0.125em
+          font inherit
+          background lighter-grey
+
+        .submit
+          display inline-block
+          position relative
+          background-color #7c9ede
+          border none
+          border-bottom 0.25em solid #5070be
+          font inherit
+          padding 0.125em 0.25em 0.125em 0.375em
+          color black
+          border-radius 0
+          text-decoration none
+          top -0.25em
+          cursor pointer
+
+          &:hover
+            background-color #92b6ee
+
+          &:active
+            border-bottom-width 0.125em
+            top -0.125em
+
+      .social
+        a
+          color dark-grey
+
+          &:hover
+            color black

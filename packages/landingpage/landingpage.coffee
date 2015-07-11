@@ -8,6 +8,11 @@ class PixelArtAcademy.LandingPage extends AM.Component
   middleSceneHeight = 180
   middleSceneOffsetFactor = 0.5
 
+  coatOfArmsHeight = 103
+  coatOfArmsOffset = 85
+
+  bottomSectionHeight = 150
+
   constructor: (@pixelArtAcademy) ->
     super
 
@@ -18,6 +23,10 @@ class PixelArtAcademy.LandingPage extends AM.Component
     @initializingClass = new ReactiveField "initializing"
 
   initialize: ->
+    # Since focusing moves scroll position in Safari, let's focus right here and scroll to top.
+    @focusPrompt()
+    $('html').scrollTop(0)
+
     @display = @pixelArtAcademy.services.getService AM.Display
     @display.maxDisplayWidth sceneWidth
 
@@ -90,32 +99,153 @@ class PixelArtAcademy.LandingPage extends AM.Component
         element.$element.css top: element.top * scale
 
     # Cache elements.
-    @$scene = $('.scene')
+    @$paralaxSections = $('.landing-page .scene').add('.landing-page .bottom-section')
     @supportPageOffset = window.pageYOffset isnt undefined
     @isCSS1Compat = (document.compatMode or "") is "CSS1Compat"
 
-    ### EVENT LOOP ###
-
     # Enable magnification detection.
     @autorun =>
-      # Register dependency on display scaling.
+      # Register dependency on display scaling and viewport size.
       @display.scale()
+      @display.viewport()
       @hasResized = true
 
     # Enable scroll detection.
-    $(window).on "scroll.#{@_id}", (event) =>
+    $(window).scroll (event) =>
       @hasScrolled = true
 
     @hasScrolled = true
 
+    ### Animation ###
+
+    @$textAdventureLines = $('.landing-page .text-adventure .line')
+    @$textAdventureLines.css
+      opacity: 0
+
+    @textAdventureShown = false
+    @kickstarterAnnouncementShown = false
+
     # We are finished with initialization.
     @initializingClass ""
 
-  ### HELPERS ###
+  showTextAdventure: ->
+    return if @textAdventureShown
+
+    @$textAdventureLines.each (index) ->
+      $(this).velocity
+        opacity: 1
+      ,
+        duration: 2500
+        delay: index * 350
+        easing: 'ease-in-out'
+
+    @textAdventureShown = true
+
+  showKickstarterAnnouncement: ->
+    return if @kickstarterAnnouncementShown
+
+    $('.landing-page .text-adventure').velocity
+      opacity: 0
+    ,
+      duration: 2000
+      easing: 'ease-in-out'
+      complete: =>
+        $('.landing-page .text-adventure').hide()
+        $('.landing-page .eager-to-start').show()
+
+        $('.landing-page .eager-to-start .part-1').velocity
+          opacity: 1
+        ,
+          duration: 2000
+          easing: 'ease-in-out'
+
+        $('.landing-page .eager-to-start .part-2').velocity
+          opacity: 1
+        ,
+          duration: 2000
+          delay: 2000
+          easing: 'ease-in-out'
+          complete: =>
+            $('.landing-page .eager-to-start').velocity
+              opacity: 0
+            ,
+              duration: 2000
+              delay: 500
+              easing: 'ease-in-out'
+              complete: =>
+                $('.landing-page .eager-to-start').hide()
+                $('.landing-page .kickstarter').show().velocity
+                  opacity: 1
+                ,
+                  duration: 1000
+                  easing: 'ease-in-out'
+
+    @kickstarterAnnouncementShown = true
+
+  events: ->
+    super.concat
+      'mouseenter .action': @onMouseEnterAction
+      'mouseleave .action': @onMouseLeaveAction
+      'click .action': @onClickAction
+      'click .prompt-area': @onClickPromptArea
+      'change .prompt': @onChangePrompt
+      'focus .mailing-list .input': @onFocusMailingList
+      'blur .mailing-list .input': @onBlurMailingList
+
+  onMouseEnterAction: (event) ->
+    return if @hoverOnAction
+    @hoverOnAction = true
+
+    $prompt = $('.text-adventure .prompt')
+    @promptOldText = $prompt.val() or ""
+    @promptWasFocused = $prompt.is(":focus")
+    $prompt.blur().val($(event.target).data('action'))
+
+  onMouseLeaveAction: (event) ->
+    return unless @hoverOnAction
+
+    $prompt = $('.text-adventure .prompt')
+    $prompt.val(@promptOldText)
+    $prompt.focus() if @promptWasFocused
+
+    @hoverOnAction = false
+
+  onClickAction: (event) ->
+    @prepareForKickstarterAnnouncement()
+
+  prepareForKickstarterAnnouncement: ->
+    # Scroll down and show kickstarter animation.
+    ###
+    $('html').velocity 'scroll',
+      easing: 'ease-in-out'
+      duration: 1000
+      offset: $('html').height() - $(window).height()
+      mobileHA: false
+    ###
+    @showKickstarterAnnouncement()
+
+  onClickPromptArea: (event) ->
+    @focusPrompt()
+
+  focusPrompt: ->
+    $('.text-adventure .prompt').focus()
+
+  onChangePrompt: (event) ->
+    # Don't react when hovering is changing the input.
+    return if @hoverOnAction
+
+    $('.text-adventure .prompt').blur()
+    @prepareForKickstarterAnnouncement()
+
+  onFocusMailingList: ->
+    @skipDraw = true
+
+  onBlurMailingList: ->
+    @skipDraw = false
 
   draw: (appTime) ->
-
-    ### Resizing ###
+    # Prevent trouble on mobile.
+    return if @skipDraw
 
     if @hasResized
       @hasResized = false
@@ -145,30 +275,32 @@ class PixelArtAcademy.LandingPage extends AM.Component
         height: middleSectionBounds.bottom()
 
       bottomSectionBounds = new AE.Rectangle
-        x: sceneBounds.x()
+        x: viewport.bounds.x() + viewport.safeArea.left()
         y: sceneBounds.bottom()
-        width: viewport.bounds.width()
-        height: viewport.bounds.height()
+        width: viewport.safeArea.width()
+        height: bottomSectionHeight * scale
 
       # Apply changes.
       $('.landing-page .scene').css sceneBounds.toDimensions()
 
       $('.landing-page .top-section').css topSectionBounds.toDimensions()
 
-      topSectionRestHeight = topSectionBounds.height() * 0.5 - 60 * scale
+      topSectionRestHeight = topSectionBounds.height() * 0.5 - coatOfArmsHeight * 0.5 * scale
       $('.landing-page .top-section .top, .landing-page .top-section .bottom').css
         height: topSectionRestHeight
         lineHeight: "#{topSectionRestHeight}px"
 
       $('.landing-page .top-section .middle').css
-        top: topSectionBounds.height() * 0.5 - 60 * scale
+        top: topSectionBounds.height() * 0.5 - coatOfArmsOffset * scale
 
       $('.landing-page .middle-section').css middleSectionBounds.toDimensions()
+      $('.landing-page .bottom-section').css bottomSectionBounds.toDimensions()
 
-      $('.landing-page .bottom-section').css
-        marginTop: bottomSectionBounds.top()
-        marginBottom: viewport.bounds.top()
-        minHeight: bottomSectionBounds.height()
+      $('.landing-page').css
+        height: bottomSectionBounds.bottom() + viewport.bounds.y()
+
+      # Update trigger sections.
+      @textAdventureShowScrollTop = bottomSectionBounds.top() - viewport.bounds.bottom()
 
       # Update parallax origins. They tells us at what scroll top the images are at the original setup.
 
@@ -179,8 +311,6 @@ class PixelArtAcademy.LandingPage extends AM.Component
       middleScenePillarboxBarHeight = (viewport.bounds.height() - middleSectionBounds.height()) * 0.5
       @middleParallaxOrigin = middleSectionBounds.top() - middleScenePillarboxBarHeight
 
-    ### Parallax ###
-
     if @hasScrolled
       @hasScrolled = false
 
@@ -188,8 +318,10 @@ class PixelArtAcademy.LandingPage extends AM.Component
       topDelta = scrollTop - @topParallaxOrigin
       middleDelta = scrollTop - @middleParallaxOrigin
 
+      @showTextAdventure() if not @textAdventureLinesShown and scrollTop >= @textAdventureShowScrollTop
+
       # Move sections.
-      @$scene.css transform: "translate3d(0, #{-scrollTop}px, 0)"
+      @$paralaxSections.css transform: "translate3d(0, #{-scrollTop}px, 0)"
 
       # Move elements.
       for {delta, elements} in [
