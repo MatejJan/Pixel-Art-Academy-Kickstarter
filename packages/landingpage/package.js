@@ -21,6 +21,9 @@ Package.onUse(function (api) {
 
 	api.export('PixelArtAcademy');
 
+	api.addFiles('LZWEncoder.js', 'client');
+	api.addFiles('NeuQuant.js', 'client');
+	api.addFiles('GIFEncoder.js', 'client');
 	api.addFiles('lake.js', 'client');
   api.addFiles('landingpage.html');
 	api.addFiles('landingpage.styl');

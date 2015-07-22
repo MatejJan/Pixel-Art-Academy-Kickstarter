@@ -163,6 +163,8 @@ class PixelArtAcademy.LandingPage extends AM.Component
 
     ### Reflection ###
 
+    ### Handled by a gif instead - use only when re-rendering
+
     $reflection = $('.landing-page .reflection')
     reflectionImageUrl = '/landingpage/retropolis/reflection.png'
     @drawReflection = createReflection reflectionImageUrl, $reflection,
@@ -183,8 +185,6 @@ class PixelArtAcademy.LandingPage extends AM.Component
         # Reflection canvas is double in size.
         height: reflectionSize.height * scale * 2
 
-      console.log reflectionSize, scale, $canvas[0]
-
     # Load a copy for measuring purposes.
     $('<img/>').attr(src: reflectionImageUrl).load ->
       loadedImage = @
@@ -198,6 +198,8 @@ class PixelArtAcademy.LandingPage extends AM.Component
     # Scale reflection canvas.
     @autorun (computation) =>
       scaleReflectionCanvas()
+
+    ###
 
     # We are finished with initialization.
     @initializingClass ""
@@ -320,9 +322,6 @@ class PixelArtAcademy.LandingPage extends AM.Component
   draw: (appTime) ->
     # Prevent trouble on mobile.
     return if @skipDraw
-
-    # Animate reflection.
-    @drawReflection appTime.elapsedAppTime
 
     if @hasResized
       @hasResized = false

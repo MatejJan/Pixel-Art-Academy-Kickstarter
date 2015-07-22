@@ -16,9 +16,13 @@ createReflection = function(imageUrl, $parent, options) {
 	var scale = settings['scale']/2;
 
 	var ca = document.createElement('canvas');
+	var exportCa = document.createElement('canvas');
 	var c = ca.getContext('2d');
+	var exportC = ca.getContext('2d');
 
 	var img_loaded = false;
+
+	var gif = null;
 
 	$parent.append(ca);
 
@@ -34,6 +38,15 @@ createReflection = function(imageUrl, $parent, options) {
 
 		c.canvas.width  = this.width;
 		c.canvas.height = this.height*2;
+		exportC.canvas.width  = this.width;
+		exportC.canvas.height = this.height*2;
+
+		gif = new GIFEncoder();
+		gif.setRepeat(0); //0  -> loop forever
+		//1+ -> loop n times then stop
+		gif.setDelay(50); //go to next frame every n milliseconds
+		gif.setTransparent(0xa6e2fe);
+		gif.start();
 
 		c.drawImage(this, 0,  0);
 
@@ -69,12 +82,11 @@ createReflection = function(imageUrl, $parent, options) {
 
 					// horizon flickering fix
 					if (j < 0) {
-						pixel += 4;
-						continue;
+						j = 0;
 					}
 
 					// edge wrapping fix
-					var m = j % (w*4);
+					/*var m = j % (w*4);
 					var n = scale * 10 * (y/waves);
 					if (m < n || m > (w*4)-n) {
 						var sign = y < w/2 ? 1 : -1;
@@ -84,7 +96,7 @@ createReflection = function(imageUrl, $parent, options) {
 						od[++pixel] = od[pixel + 4 * sign];
 						++pixel;
 						continue;
-					}
+					}*/
 
 					if (id[j+3] != 0) {
 						od[pixel]   = id[j];
@@ -114,11 +126,25 @@ createReflection = function(imageUrl, $parent, options) {
 				frame++;
 			}
 			frames.push(odd);
+
+			exportC.putImageData(odd, 0, 0);
+			var img = exportC.canvas.toDataURL("image/png");
+
+			$frame=$('<img src="'+img+'"/>');
+
+			gif.addFrame(exportC);
+
 		}
 		c.restore();
 		if (!settings.image) {
 			c.height = c.height/2;
 		}
+
+		gif.finish();
+		var binary_gif = gif.stream().getData() //notice this is different from the as3gif package!
+		var data_url = 'data:image/gif;base64,'+ btoa(binary_gif);
+		document.write('<img src="'+data_url+'"/>');
+
 	});
 
 	var time = 0;
