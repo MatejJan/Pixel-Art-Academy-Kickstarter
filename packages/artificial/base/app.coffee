@@ -66,10 +66,10 @@ class AB.App
 
   tick: (currentFrameTime) ->
     @lastFrameTime or= currentFrameTime
-    elapsedTime = currentFrameTime - @lastFrameTime
+    elapsedTime = (currentFrameTime - @lastFrameTime) / 1000
     @lastFrameTime = currentFrameTime
 
-    # console.log "Tick at #{Math.round 1000/elapsedTime} FPS"
+    # console.log "Tick at #{Math.round 1/elapsedTime} FPS"
 
     appTime =
       elapsedAppTime: elapsedTime

@@ -21,6 +21,7 @@ Package.onUse(function (api) {
 
 	api.export('PixelArtAcademy');
 
+	api.addFiles('lake.js', 'client');
   api.addFiles('landingpage.html');
 	api.addFiles('landingpage.styl');
 	api.addFiles('landingpage.coffee');
