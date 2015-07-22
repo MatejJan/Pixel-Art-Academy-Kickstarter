@@ -22,7 +22,8 @@ class AM.Display extends AM.Component
 
     @scale = new ReactiveField 1
     @viewport = new ReactiveField
-      bounds: new AE.Rectangle()
+      actualBounds: new AE.Rectangle()
+      maxBounds: new AE.Rectangle()
       safeArea: new AE.Rectangle()
 
   initialize: ->
@@ -61,46 +62,68 @@ class AM.Display extends AM.Component
       scaledMaxWidth = if maxDisplayWidth then Math.round maxDisplayWidth * scale else clientWidth
       scaledMaxHeight = if maxDisplayHeight then Math.round maxDisplayHeight * scale else clientHeight
 
+      # Bound to actual window size.
+      scaledWidth = Math.min scaledMaxWidth, clientWidth
+      scaledHeight = Math.min scaledMaxHeight, clientHeight
+
+      # But make sure safe area is in.
+      scaledWidth = Math.max scaledWidth, scaledSafeAreaWidth
+      scaledHeight = Math.max scaledHeight, scaledSafeAreaHeight
+
+      safeClientWidth = Math.max clientWidth, scaledSafeAreaWidth
+      safeClientHeight = Math.max clientHeight, scaledSafeAreaHeight
+
       # Calculate viewport ratio, clamped to our limits.
-      uncroppedViewportRatio = scaledMaxWidth / scaledMaxHeight
+      uncroppedViewportRatio = scaledWidth / scaledHeight
 
       viewportRatio = uncroppedViewportRatio
       viewportRatio = Math.max viewportRatio, minAspectRatio if minAspectRatio
       viewportRatio = Math.min viewportRatio, maxAspectRatio if maxAspectRatio
 
       # Calculate viewport size. By default it fills the full page, but make sure it doesn't exceed the viewport ratio.
-      viewportSize =
+      actualViewportSize =
+        width: scaledWidth
+        height: scaledHeight
+
+      maxViewportSize =
         width: scaledMaxWidth
         height: scaledMaxHeight
 
       # If image is too tall, add crop bars on top/bottom.
-      viewportSize.height = viewportSize.width / viewportRatio if uncroppedViewportRatio < viewportRatio
+      actualViewportSize.height = actualViewportSize.width / viewportRatio if uncroppedViewportRatio < viewportRatio
 
       # If image is too wide, add crop bars on left/right.
-      viewportSize.width = viewportSize.height * viewportRatio if uncroppedViewportRatio > viewportRatio
+      actualViewportSize.width = actualViewportSize.height * viewportRatio if uncroppedViewportRatio > viewportRatio
 
-      viewportBounds = new AE.Rectangle
-        x: Math.round (clientWidth - viewportSize.width) * 0.5
-        y: Math.round (clientHeight - viewportSize.height) * 0.5
-        width: Math.round viewportSize.width
-        height: Math.round viewportSize.height
+      actualViewportBounds = new AE.Rectangle
+        x: Math.round (safeClientWidth - actualViewportSize.width) * 0.5
+        y: Math.round (safeClientHeight - actualViewportSize.height) * 0.5
+        width: Math.round actualViewportSize.width
+        height: Math.round actualViewportSize.height
 
-      # Safe area is relative to viewport (it will always be contained within).
+      maxViewportBounds = new AE.Rectangle
+        x: Math.round (safeClientWidth - maxViewportSize.width) * 0.5
+        y: Math.round (safeClientHeight - maxViewportSize.height) * 0.5
+        width: Math.round maxViewportSize.width
+        height: Math.round maxViewportSize.height
+
+      # Safe area is relative to actual viewport (it will always be contained within).
       safeArea = new AE.Rectangle
-        x: Math.round (viewportSize.width - scaledSafeAreaWidth) * 0.5
-        y: Math.round (viewportSize.height - scaledSafeAreaHeight) * 0.5
+        x: Math.round (actualViewportSize.width - scaledSafeAreaWidth) * 0.5
+        y: Math.round (actualViewportSize.height - scaledSafeAreaHeight) * 0.5
         width: Math.round scaledSafeAreaWidth
         height: Math.round scaledSafeAreaHeight
 
       if @isRendered()
         # Update crop bars.
-        $('.am-display .horizontal-crop-bar').css height: viewportBounds.top()
-        $('.am-display .vertical-crop-bar').css width: viewportBounds.left()
+        $('.am-display .horizontal-crop-bar').css height: actualViewportBounds.top()
+        $('.am-display .vertical-crop-bar').css width: actualViewportBounds.left()
 
         # Update debug rectangles.
-        $('.am-display .viewport-bounds').css viewportBounds.toDimensions()
+        $('.am-display .viewport-bounds').css actualViewportBounds.toDimensions()
         $('.am-display .viewport-bounds .safe-area').css safeArea.toDimensions()
 
       @viewport
-        bounds: viewportBounds
+        actualBounds: actualViewportBounds
+        maxBounds: maxViewportBounds
         safeArea: safeArea

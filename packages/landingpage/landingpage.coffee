@@ -4,12 +4,12 @@ AM = Artificial.Mirage
 class PixelArtAcademy.LandingPage extends AM.Component
   @register 'PixelArtAcademy.LandingPage'
 
-  sceneWidth = 240
+  sceneWidth = 360
   middleSceneHeight = 180
   middleSceneOffsetFactor = 0.5
 
   coatOfArmsHeight = 103
-  coatOfArmsOffset = 85
+  coatOfArmsRealHeight = 180
 
   bottomSectionHeight = 150
 
@@ -30,6 +30,37 @@ class PixelArtAcademy.LandingPage extends AM.Component
     @display = @pixelArtAcademy.services.getService AM.Display
     @display.maxDisplayWidth sceneWidth
 
+    ### Parallax ###
+
+    # Preprocess parallax elements to avoid trashing.
+    parallaxElements = []
+    topParallaxElements = []
+    middleParallaxElements = []
+
+    $('.landing-page *[data-depth]').each ->
+      $element = $(@)
+
+      scaleFactor = 1 - $element.data('depth')
+
+      parallaxInfo =
+        $element: $element
+        scaleFactor: scaleFactor
+        left: $element.css('left')
+        right: $element.css('right')
+        top: $element.css('top')
+        bottom: $element.css('bottom')
+
+      for property in ['left', 'top', 'bottom', 'right']
+        parallaxInfo[property] = if parallaxInfo[property] is 'auto' then null else parseInt(parallaxInfo[property])
+
+      parallaxElements.push parallaxInfo
+
+      localArray = if $element.closest('.top-section').length then topParallaxElements else middleParallaxElements
+      localArray.push parallaxInfo
+
+    @topParallaxElements = topParallaxElements
+    @middleParallaxElements = middleParallaxElements
+
     ### Image scaling ###
 
     # Provide scale to the jQuery handlers, which don't have @.
@@ -46,16 +77,44 @@ class PixelArtAcademy.LandingPage extends AM.Component
       $('<img/>').attr(src: source).load ->
         loadedImage = @
         # Store size from loaded image to the original image.
-        $image.data
+        data =
           sourceWidth: loadedImage.width
           sourceHeight: loadedImage.height
+          left: $image.css('left')
+          right: $image.css('right')
+          top: $image.css('top')
+          bottom: $image.css('bottom')
+
+        for property in ['left', 'top', 'bottom', 'right']
+          data[property] = if data[property] is 'auto' then null else parseInt(data[property])
+
+        $image.data data
 
         # Scale the original image for the first time.
-        $image.css
-          width: loadedImage.width * scaleField()
-          height: loadedImage.height * scaleField()
+        scale = scaleField()
+
+        css =
+          width: loadedImage.width * scale
+          height: loadedImage.height * scale
+
+        for property in ['left', 'top', 'bottom', 'right']
+          css[property] = data[property] * scale if data[property]
+
+        $image.css css
 
         $image.removeClass('initializing')
+
+    # Reposition parallax elements.
+    @autorun (computation) =>
+      scale = @display.scale()
+
+      for element in parallaxElements
+        css = {}
+
+        for property in ['left', 'top', 'bottom', 'right']
+          css[property] = element[property] * scale if element[property]
+
+        element.$element.css css
 
     # Scale the images.
     @autorun (computation) =>
@@ -63,40 +122,16 @@ class PixelArtAcademy.LandingPage extends AM.Component
 
       $('.landing-page').find('img').each ->
         $image = $(@)
-        $image.css
+
+        css =
           width: $image.data('sourceWidth') * scale
           height: $image.data('sourceHeight') * scale
 
-    ### Parallax ###
+        for property in ['left', 'top', 'bottom', 'right']
+          value = $image.data(property)
+          css[property] = value * scale if value
 
-    # Preprocess parallax elements to avoid trashing.
-    parallaxElements = []
-    topParallaxElements = []
-    middleParallaxElements = []
-
-    $('.landing-page *[data-depth]').each ->
-      $element = $(@)
-
-      scaleFactor = 1 - $element.data('depth')
-
-      parallaxInfo =
-        $element: $element
-        scaleFactor: scaleFactor
-        top: $element.position().top
-
-      parallaxElements.push parallaxInfo
-
-      localArray = if $element.closest('.top-section').length then topParallaxElements else middleParallaxElements
-      localArray.push parallaxInfo
-
-    @topParallaxElements = topParallaxElements
-    @middleParallaxElements = middleParallaxElements
-
-    @autorun (computation) =>
-      scale = @display.scale()
-
-      for element in middleParallaxElements
-        element.$element.css top: element.top * scale
+        $image.css css
 
     # Cache elements.
     @$paralaxSections = $('.landing-page .scene').add('.landing-page .bottom-section')
@@ -257,25 +292,25 @@ class PixelArtAcademy.LandingPage extends AM.Component
       viewport = @display.viewport()
 
       topSectionBounds = new AE.Rectangle
-        x: 0
+        x: viewport.safeArea.x() - viewport.maxBounds.x()
         y: 0
-        width: viewport.bounds.width()
-        height: viewport.bounds.height()
+        width: viewport.safeArea.width()
+        height: viewport.actualBounds.height()
 
       middleSectionBounds = new AE.Rectangle
         x: 0
-        y: Math.round topSectionBounds.bottom() + viewport.bounds.height() * middleSceneOffsetFactor
-        width: viewport.bounds.width()
+        y: Math.round topSectionBounds.bottom() + viewport.actualBounds.height() * middleSceneOffsetFactor
+        width: viewport.maxBounds.width()
         height: middleSceneHeight * scale
 
       sceneBounds = new AE.Rectangle
-        x: viewport.bounds.x()
-        y: viewport.bounds.y()
-        width: viewport.bounds.width()
+        x: viewport.maxBounds.x()
+        y: viewport.actualBounds.y()
+        width: viewport.maxBounds.width()
         height: middleSectionBounds.bottom()
 
       bottomSectionBounds = new AE.Rectangle
-        x: viewport.bounds.x() + viewport.safeArea.left()
+        x: viewport.actualBounds.x() + viewport.safeArea.left()
         y: sceneBounds.bottom()
         width: viewport.safeArea.width()
         height: bottomSectionHeight * scale
@@ -291,29 +326,30 @@ class PixelArtAcademy.LandingPage extends AM.Component
         lineHeight: "#{topSectionRestHeight}px"
 
       $('.landing-page .top-section .middle').css
-        top: topSectionBounds.height() * 0.5 - coatOfArmsOffset * scale
+        top: topSectionBounds.height() * 0.5 - coatOfArmsRealHeight * 0.5 * scale
 
       $('.landing-page .middle-section').css middleSectionBounds.toDimensions()
       $('.landing-page .bottom-section').css bottomSectionBounds.toDimensions()
 
       $('.landing-page').css
-        height: bottomSectionBounds.bottom() + viewport.bounds.y()
+        height: bottomSectionBounds.bottom() + viewport.actualBounds.y()
 
       # Update trigger sections.
-      @textAdventureShowScrollTop = bottomSectionBounds.top() - viewport.bounds.bottom()
+      @textAdventureShowScrollTop = bottomSectionBounds.top() - viewport.actualBounds.bottom()
 
       # Update parallax origins. They tells us at what scroll top the images are at the original setup.
 
       # The top scene is correct simply as the page is rendered on top.
-      @topParallaxOrigin = topSectionBounds.top()
+      @topParallaxOrigin = 0
 
       # It should be when the middle section is exactly in the middle of the screen.
-      middleScenePillarboxBarHeight = (viewport.bounds.height() - middleSectionBounds.height()) * 0.5
+      middleScenePillarboxBarHeight = (viewport.actualBounds.height() - middleSectionBounds.height()) * 0.5
       @middleParallaxOrigin = middleSectionBounds.top() - middleScenePillarboxBarHeight
 
     if @hasScrolled
       @hasScrolled = false
 
+      scrollLeft = if @supportPageOffset then window.pageXOffset else if isCSS1Compat then document.documentElement.scrollLeft else document.body.scrollLeft
       scrollTop = if @supportPageOffset then window.pageYOffset else if isCSS1Compat then document.documentElement.scrollTop else document.body.scrollTop
       topDelta = scrollTop - @topParallaxOrigin
       middleDelta = scrollTop - @middleParallaxOrigin
@@ -321,7 +357,7 @@ class PixelArtAcademy.LandingPage extends AM.Component
       @showTextAdventure() if not @textAdventureLinesShown and scrollTop >= @textAdventureShowScrollTop
 
       # Move sections.
-      @$paralaxSections.css transform: "translate3d(0, #{-scrollTop}px, 0)"
+      @$paralaxSections.css transform: "translate3d(#{-scrollLeft}px, #{-scrollTop}px, 0)"
 
       # Move elements.
       for {delta, elements} in [

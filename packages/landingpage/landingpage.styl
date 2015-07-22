@@ -15,7 +15,7 @@ body
   margin 0
   background black
   color white
-  overflow-x hidden
+  overflow-x auto
   // We know that the page will need to scroll, so we force it
   // here for the measurements on the first go to accomodate it.
   overflow-y scroll
@@ -102,12 +102,12 @@ body
     position fixed
     transform translateZ(0)
     background black
-    uni()
     color grey
+    padding-left 0.8em
 
     .foreground
       position absolute
-      left 0
+      left -6em
       // Prevent gap on mobile
       top 1px
 
@@ -119,6 +119,7 @@ body
     .text-adventure
       overflow hidden
       height 100%
+      uni()
 
       .line
         display block
@@ -154,6 +155,7 @@ body
       right 0
       margin-top -4.2em
       text-align center
+      uni()
 
       p
         opacity 0
@@ -163,6 +165,7 @@ body
       opacity 0
       text-align center
       color dark-grey
+      uni()
 
       .retronator-presents
         margin 0
