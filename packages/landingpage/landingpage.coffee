@@ -10,6 +10,7 @@ class PixelArtAcademy.LandingPage extends AM.Component
 
   coatOfArmsHeight = 103
   coatOfArmsRealHeight = 180
+  coatOfArmsOffset = 5
 
   bottomSectionHeight = 150
 
@@ -292,7 +293,7 @@ class PixelArtAcademy.LandingPage extends AM.Component
       viewport = @display.viewport()
 
       topSectionBounds = new AE.Rectangle
-        x: viewport.safeArea.x() - viewport.maxBounds.x()
+        x: viewport.actualBounds.x() - viewport.maxBounds.x() + viewport.safeArea.x()
         y: 0
         width: viewport.safeArea.width()
         height: viewport.actualBounds.height()
@@ -326,7 +327,7 @@ class PixelArtAcademy.LandingPage extends AM.Component
         lineHeight: "#{topSectionRestHeight}px"
 
       $('.landing-page .top-section .middle').css
-        top: topSectionBounds.height() * 0.5 - coatOfArmsRealHeight * 0.5 * scale
+        top: topSectionBounds.height() * 0.5 - coatOfArmsRealHeight * 0.5 * scale + coatOfArmsOffset * scale
 
       $('.landing-page .middle-section').css middleSectionBounds.toDimensions()
       $('.landing-page .bottom-section').css bottomSectionBounds.toDimensions()
