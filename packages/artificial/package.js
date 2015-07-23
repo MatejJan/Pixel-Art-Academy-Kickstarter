@@ -29,6 +29,7 @@ Package.onUse(function(api) {
 	api.addFiles('base/app.coffee');
 	api.addFiles('base/services.coffee');
 
+	api.addFiles('everywhere/jquery/positioncss.coffee', 'client');
 	api.addFiles('everywhere/rectangle.coffee');
 
 	api.addFiles('mirage/component.coffee');

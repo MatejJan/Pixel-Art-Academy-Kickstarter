@@ -199,8 +199,8 @@ class AM.Display extends AM.Component
       maxBounds = new AE.Rectangle
         x: Math.round (safeClientWidth - scaledMaxDisplaySize.width) * 0.5
         y: Math.round (safeClientHeight - scaledMaxDisplaySize.height) * 0.5
-        width: Math.round maxViewportSize.width
-        height: Math.round maxViewportSize.height
+        width: Math.round scaledMaxDisplaySize.width
+        height: Math.round scaledMaxDisplaySize.height
 
       # Safe area is relative to the viewport (it will always be contained within).
       safeArea = new AE.Rectangle

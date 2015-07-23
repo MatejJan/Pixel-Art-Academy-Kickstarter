@@ -17,6 +17,8 @@ class PixelArtAcademy.LandingPage extends AM.Component
   # Run the intro animation.
   intro = false
 
+  coatOfArmsOffset = -5 if intro
+
   constructor: (@pixelArtAcademy) ->
     super
 
@@ -41,7 +43,8 @@ class PixelArtAcademy.LandingPage extends AM.Component
     topParallaxElements = []
     middleParallaxElements = []
 
-    sceneItems = {}
+    sceneItems =
+      coatOfArms: []
 
     $('.landing-page *[data-depth]').each ->
       $element = $(@)
@@ -51,10 +54,10 @@ class PixelArtAcademy.LandingPage extends AM.Component
       parallaxInfo =
         $element: $element
         scaleFactor: scaleFactor
-        left: $element.css('left')
-        right: $element.css('right')
-        top: $element.css('top')
-        bottom: $element.css('bottom')
+        left: $element.positionCss('left')
+        right: $element.positionCss('right')
+        top: $element.positionCss('top')
+        bottom: $element.positionCss('bottom')
 
       for property in ['left', 'top', 'bottom', 'right']
         parallaxInfo[property] = if parallaxInfo[property] is 'auto' then null else parseInt(parallaxInfo[property])
@@ -71,6 +74,7 @@ class PixelArtAcademy.LandingPage extends AM.Component
       sceneItems.frigates2 = parallaxInfo if $element.hasClass('frigates-2')
       sceneItems.frigates3 = parallaxInfo if $element.hasClass('frigates-3')
       sceneItems.frigates4 = parallaxInfo if $element.hasClass('frigates-4')
+      sceneItems.coatOfArms.push parallaxInfo if $element.hasClass('coat-of-arms')
 
     @sceneItems = sceneItems
 
@@ -96,10 +100,10 @@ class PixelArtAcademy.LandingPage extends AM.Component
         data =
           sourceWidth: loadedImage.width
           sourceHeight: loadedImage.height
-          left: $image.css('left')
-          right: $image.css('right')
-          top: $image.css('top')
-          bottom: $image.css('bottom')
+          left: $image.positionCss('left')
+          right: $image.positionCss('right')
+          top: $image.positionCss('top')
+          bottom: $image.positionCss('bottom')
 
         for property in ['left', 'top', 'bottom', 'right']
           data[property] = if data[property] is 'auto' then null else parseInt(data[property])
@@ -373,7 +377,7 @@ class PixelArtAcademy.LandingPage extends AM.Component
 
       if intro
         # Move the title section over the middle.
-        topSectionBounds.y middleSectionBounds.y() - (topSectionBounds.height() - middleSectionBounds.height()) * 0.5
+        topSectionBounds.y middleSectionBounds.y() - (topSectionBounds.height() - middleSectionBounds.height()) * 0.5 + sceneBounds.y()
 
         # No need to scroll.
         $('.landing-page .top-section .bottom').hide()
@@ -436,13 +440,19 @@ class PixelArtAcademy.LandingPage extends AM.Component
       @$paralaxSections.css transform: "translate3d(#{-scrollLeft}px, #{-scrollTop}px, 0)"
 
       # Move elements.
-      for {delta, elements} in [
-        {delta: @topScrollDelta, elements: @topParallaxElements}
-        {delta: @middleScrollDelta, elements: @middleParallaxElements}
-      ]
-        for element in elements
-          offset = delta * element.scaleFactor
-          element.$element.css transform: "translate3d(0, #{offset}px, 0)"
+      for element in @middleParallaxElements
+        offset = @middleScrollDelta * element.scaleFactor
+        element.$element.css transform: "translate3d(0, #{offset}px, 0)"
+
+      for element in @topParallaxElements
+        offset = @topScrollDelta * element.scaleFactor
+        element.$element.css transform: "translate3d(0, #{offset}px, 0)"
+
+    if intro
+      for element in @sceneItems.coatOfArms
+        tilt = Math.sin(appTime.totalAppTime / 1.5) * 10 * scale
+        offset = (@topScrollDelta + tilt) * element.scaleFactor + 0.6 * tilt
+        element.$element.css transform: "translate3d(0, #{offset}px, 0)"
 
     x = Math.sin(appTime.totalAppTime / 2) * 5 * scale
     y = @middleScrollDelta * @sceneItems.quadrocopter.scaleFactor + Math.sin(appTime.totalAppTime) * 3 * scale
