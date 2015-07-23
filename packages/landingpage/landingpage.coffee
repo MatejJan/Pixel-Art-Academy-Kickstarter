@@ -38,6 +38,8 @@ class PixelArtAcademy.LandingPage extends AM.Component
     topParallaxElements = []
     middleParallaxElements = []
 
+    sceneItems = {}
+
     $('.landing-page *[data-depth]').each ->
       $element = $(@)
 
@@ -58,6 +60,16 @@ class PixelArtAcademy.LandingPage extends AM.Component
 
       localArray = if $element.closest('.top-section').length then topParallaxElements else middleParallaxElements
       localArray.push parallaxInfo
+
+      sceneItems.quadrocopter = parallaxInfo if $element.hasClass('quadrocopter')
+      sceneItems.airshipFar = parallaxInfo if $element.hasClass('airship-far')
+      sceneItems.airshipNear = parallaxInfo if $element.hasClass('airship-near')
+      sceneItems.frigates1 = parallaxInfo if $element.hasClass('frigates-1')
+      sceneItems.frigates2 = parallaxInfo if $element.hasClass('frigates-2')
+      sceneItems.frigates3 = parallaxInfo if $element.hasClass('frigates-3')
+      sceneItems.frigates4 = parallaxInfo if $element.hasClass('frigates-4')
+
+    @sceneItems = sceneItems
 
     @topParallaxElements = topParallaxElements
     @middleParallaxElements = middleParallaxElements
@@ -160,6 +172,9 @@ class PixelArtAcademy.LandingPage extends AM.Component
 
     @textAdventureShown = false
     @kickstarterAnnouncementShown = false
+
+    @airshipsMoving = false
+    @airshipsMovingTimeStart = 0
 
     ### Reflection ###
 
@@ -323,13 +338,14 @@ class PixelArtAcademy.LandingPage extends AM.Component
     # Prevent trouble on mobile.
     return if @skipDraw
 
+    scale = @display.scale()
+
     if @hasResized
       @hasResized = false
 
       # Also trigger parallax.
       @hasScrolled = true
 
-      scale = @display.scale()
       viewport = @display.viewport()
 
       topSectionBounds = new AE.Rectangle
@@ -392,19 +408,51 @@ class PixelArtAcademy.LandingPage extends AM.Component
 
       scrollLeft = if @supportPageOffset then window.pageXOffset else if isCSS1Compat then document.documentElement.scrollLeft else document.body.scrollLeft
       scrollTop = if @supportPageOffset then window.pageYOffset else if isCSS1Compat then document.documentElement.scrollTop else document.body.scrollTop
-      topDelta = scrollTop - @topParallaxOrigin
-      middleDelta = scrollTop - @middleParallaxOrigin
+      @topScrollDelta = scrollTop - @topParallaxOrigin
+      @middleScrollDelta = scrollTop - @middleParallaxOrigin
 
       @showTextAdventure() if not @textAdventureLinesShown and scrollTop >= @textAdventureShowScrollTop
+
+      unless @airshipsMoving
+        @airshipsMovingTimeStart = appTime.totalAppTime
+        @airshipsMoving = true if scrollTop > 0
 
       # Move sections.
       @$paralaxSections.css transform: "translate3d(#{-scrollLeft}px, #{-scrollTop}px, 0)"
 
       # Move elements.
       for {delta, elements} in [
-        {delta: topDelta, elements: @topParallaxElements}
-        {delta: middleDelta, elements: @middleParallaxElements}
+        {delta: @topScrollDelta, elements: @topParallaxElements}
+        {delta: @middleScrollDelta, elements: @middleParallaxElements}
       ]
         for element in elements
           offset = delta * element.scaleFactor
           element.$element.css transform: "translate3d(0, #{offset}px, 0)"
+
+    x = Math.sin(appTime.totalAppTime / 2) * 5 * scale
+    y = @middleScrollDelta * @sceneItems.quadrocopter.scaleFactor + Math.sin(appTime.totalAppTime) * 3 * scale
+    @sceneItems.quadrocopter.$element.css transform: "translate3d(#{x}px, #{y}px, 0)"
+
+    x = (appTime.totalAppTime - @airshipsMovingTimeStart) * scale
+    y = @middleScrollDelta * @sceneItems.airshipFar.scaleFactor
+    @sceneItems.airshipFar.$element.css transform: "translate3d(#{x}px, #{y}px, 0)"
+
+    x = (appTime.totalAppTime - @airshipsMovingTimeStart) * scale * 5 - 100 * scale
+    y = @middleScrollDelta * @sceneItems.airshipNear.scaleFactor
+    @sceneItems.airshipNear.$element.css transform: "translate3d(#{x}px, #{y}px, 0)"
+
+    x = Math.sin(appTime.totalAppTime / 5) * scale
+    y = @middleScrollDelta * @sceneItems.frigates1.scaleFactor + Math.sin(appTime.totalAppTime / 2) * 2 * scale
+    @sceneItems.frigates1.$element.css transform: "translate3d(#{x}px, #{y}px, 0)"
+
+    x = Math.sin(appTime.totalAppTime / 5 + 1) * scale * 2
+    y = @middleScrollDelta * @sceneItems.frigates2.scaleFactor + Math.sin(appTime.totalAppTime / 2 + 4) * scale
+    @sceneItems.frigates2.$element.css transform: "translate3d(#{x}px, #{y}px, 0)"
+
+    x = Math.sin(appTime.totalAppTime / 5 + 2) * 2 * scale
+    y = @middleScrollDelta * @sceneItems.frigates3.scaleFactor + Math.sin(appTime.totalAppTime / 2 + 5) * 2 * scale
+    @sceneItems.frigates3.$element.css transform: "translate3d(#{x}px, #{y}px, 0)"
+
+    x = Math.sin(appTime.totalAppTime / 5 + 3) * 2 * scale
+    y = @middleScrollDelta * @sceneItems.frigates4.scaleFactor + Math.sin(appTime.totalAppTime / 2 + 6) * 3 * scale
+    @sceneItems.frigates4.$element.css transform: "translate3d(#{x}px, #{y}px, 0)"
