@@ -14,6 +14,9 @@ class PixelArtAcademy.LandingPage extends AM.Component
 
   bottomSectionHeight = 150
 
+  # Run the intro animation.
+  intro = false
+
   constructor: (@pixelArtAcademy) ->
     super
 
@@ -147,7 +150,7 @@ class PixelArtAcademy.LandingPage extends AM.Component
         $image.css css
 
     # Cache elements.
-    @$paralaxSections = $('.landing-page .scene').add('.landing-page .bottom-section')
+    @$paralaxSections = $('.landing-page .parallax-section')
     @supportPageOffset = window.pageYOffset isnt undefined
     @isCSS1Compat = (document.compatMode or "") is "CSS1Compat"
 
@@ -349,25 +352,34 @@ class PixelArtAcademy.LandingPage extends AM.Component
       viewport = @display.viewport()
 
       topSectionBounds = new AE.Rectangle
-        x: viewport.actualBounds.x() - viewport.maxBounds.x() + viewport.safeArea.x()
-        y: 0
+        x: viewport.viewportBounds.x() + viewport.safeArea.x()
+        y: viewport.viewportBounds.y()
         width: viewport.safeArea.width()
-        height: viewport.actualBounds.height()
+        height: viewport.viewportBounds.height()
 
+      # Middle section is absolute inside the scene.
       middleSectionBounds = new AE.Rectangle
         x: 0
-        y: Math.round topSectionBounds.bottom() + viewport.actualBounds.height() * middleSceneOffsetFactor
+        y: viewport.viewportBounds.height() * (1 + middleSceneOffsetFactor)
         width: viewport.maxBounds.width()
         height: middleSceneHeight * scale
 
+      # Scene is the part with sky background.
       sceneBounds = new AE.Rectangle
         x: viewport.maxBounds.x()
-        y: viewport.actualBounds.y()
+        y: viewport.viewportBounds.y()
         width: viewport.maxBounds.width()
         height: middleSectionBounds.bottom()
 
+      if intro
+        # Move the title section over the middle.
+        topSectionBounds.y middleSectionBounds.y() - (topSectionBounds.height() - middleSectionBounds.height()) * 0.5
+
+        # No need to scroll.
+        $('.landing-page .top-section .bottom').hide()
+
       bottomSectionBounds = new AE.Rectangle
-        x: viewport.actualBounds.x() + viewport.safeArea.left()
+        x: viewport.viewportBounds.x() + viewport.safeArea.x()
         y: sceneBounds.bottom()
         width: viewport.safeArea.width()
         height: bottomSectionHeight * scale
@@ -389,10 +401,10 @@ class PixelArtAcademy.LandingPage extends AM.Component
       $('.landing-page .bottom-section').css bottomSectionBounds.toDimensions()
 
       $('.landing-page').css
-        height: bottomSectionBounds.bottom() + viewport.actualBounds.y()
+        height: bottomSectionBounds.bottom() + viewport.viewportBounds.y()
 
       # Update trigger sections.
-      @textAdventureShowScrollTop = bottomSectionBounds.top() - viewport.actualBounds.bottom()
+      @textAdventureShowScrollTop = bottomSectionBounds.top() - viewport.viewportBounds.bottom()
 
       # Update parallax origins. They tells us at what scroll top the images are at the original setup.
 
@@ -400,8 +412,11 @@ class PixelArtAcademy.LandingPage extends AM.Component
       @topParallaxOrigin = 0
 
       # It should be when the middle section is exactly in the middle of the screen.
-      middleScenePillarboxBarHeight = (viewport.actualBounds.height() - middleSectionBounds.height()) * 0.5
+      middleScenePillarboxBarHeight = (viewport.viewportBounds.height() - middleSectionBounds.height()) * 0.5
       @middleParallaxOrigin = middleSectionBounds.top() - middleScenePillarboxBarHeight
+
+      if intro
+        @topParallaxOrigin = @middleParallaxOrigin
 
     if @hasScrolled
       @hasScrolled = false
