@@ -15,9 +15,9 @@ class PixelArtAcademy.LandingPage extends AM.Component
   bottomSectionHeight = 150
 
   # Run the intro animation.
-  intro = false
+  intro = true
 
-  coatOfArmsOffset = -5 if intro
+  coatOfArmsOffset = -2 if intro
 
   constructor: (@pixelArtAcademy) ->
     super
@@ -183,6 +183,20 @@ class PixelArtAcademy.LandingPage extends AM.Component
     @airshipsMoving = false
     @airshipsMovingTimeStart = 0
 
+    if intro
+      $('.landing-page .top-section .top').css(opacity: 0)
+      $('.landing-page .top-section .middle').css(opacity: 0)
+      $('.landing-page .top-section .bottom').hide()
+
+      $('.landing-page .bottom-section .text-adventure').hide()
+
+      $('.landing-page .intro-section').show()
+
+    # Start intro after a couple seconds.
+      Meteor.setTimeout =>
+        @animateIntro()
+      , 2000
+
     ### Reflection ###
 
     ### Handled by a gif instead - use only when re-rendering
@@ -280,6 +294,66 @@ class PixelArtAcademy.LandingPage extends AM.Component
 
     @kickstarterAnnouncementShown = true
 
+  animateIntro: ->
+    $('html').velocity 'scroll',
+      duration: 20000
+      easing: 'ease-out'
+      offset: $('.landing-page .top-section').offset().top - @display.viewport().viewportBounds.y()
+
+    $('.landing-page .top-section .middle').velocity
+      opacity: 1
+    ,
+      delay: 19500
+      duration: 2000
+      easing: 'ease-in-out'
+      complete: =>
+        $('.landing-page .top-section .top').velocity
+          opacity: 1
+        ,
+          duration: 2000
+          easing: 'ease-in-out'
+
+    $('.landing-page .intro-section .retronator-presents').velocity
+      opacity: 1
+    ,
+      duration: 2000
+      delay: 1000
+      easing: 'ease-in-out'
+
+    .velocity
+      opacity: 0
+    ,
+      duration: 2000
+      delay: 1000
+      easing: 'ease-in-out'
+      complete: =>
+        $('.landing-page .intro-section .game-by').velocity
+          opacity: 1
+        ,
+          duration: 2000
+          easing: 'ease-in-out'
+
+        .velocity
+          opacity: 0
+        ,
+          duration: 2000
+          delay: 1000
+          easing: 'ease-in-out'
+          complete: =>
+            $('.landing-page .intro-section .music-by').velocity
+              opacity: 1
+            ,
+              duration: 2000
+              easing: 'ease-in-out'
+
+            .velocity
+              opacity: 0
+            ,
+              duration: 4000
+              delay: 1000
+              easing: 'ease-in-out'
+
+
   events: ->
     super.concat
       'mouseenter .action': @onMouseEnterAction
@@ -376,11 +450,11 @@ class PixelArtAcademy.LandingPage extends AM.Component
         height: middleSectionBounds.bottom()
 
       if intro
+        # Place the intro section to the top.
+        $('.landing-page .intro-section').css topSectionBounds.toDimensions()
+
         # Move the title section over the middle.
         topSectionBounds.y middleSectionBounds.y() - (topSectionBounds.height() - middleSectionBounds.height()) * 0.5 + sceneBounds.y()
-
-        # No need to scroll.
-        $('.landing-page .top-section .bottom').hide()
 
       bottomSectionBounds = new AE.Rectangle
         x: viewport.viewportBounds.x() + viewport.safeArea.x()
@@ -450,7 +524,7 @@ class PixelArtAcademy.LandingPage extends AM.Component
 
     if intro
       for element in @sceneItems.coatOfArms
-        tilt = Math.sin(appTime.totalAppTime / 1.5) * 10 * scale
+        tilt = Math.sin(appTime.totalAppTime + 2) * 10 * scale
         offset = (@topScrollDelta + tilt) * element.scaleFactor + 0.6 * tilt
         element.$element.css transform: "translate3d(0, #{offset}px, 0)"
 

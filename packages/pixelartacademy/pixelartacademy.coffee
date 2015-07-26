@@ -5,7 +5,7 @@ class PixelArtAcademy extends Artificial.Base.App
   constructor: ->
     super
 
-    recording = false
+    recording = true
 
     if recording
       @display = new Artificial.Mirage.Display @,
