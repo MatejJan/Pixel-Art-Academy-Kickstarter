@@ -38,6 +38,7 @@ peerlibrary:blaze-components@0.12.0
 peerlibrary:computed-field@0.3.0
 peerlibrary:reactive-field@0.1.0
 pixelartacademy@0.1.0
+pixelscaling@0.1.0
 random@1.0.3
 reactive-dict@1.1.0
 reactive-var@1.0.5

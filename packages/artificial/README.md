@@ -22,6 +22,8 @@ Some static classes and routines are just useful right about everywhere in your 
 category. The place for them is Artificial Everywhere (AE).
 
 - **Rectangle**: A reactive rectangle data structure.
+- **Jquery**:
+  - **PositionCSS**: A cross-browser way to read position css properties (left/right/top/bottom).
 
 ### Artificial Mirage
 
@@ -34,3 +36,10 @@ into a system, specially designed to adapt to different display resolutions and 
 - **CSSHelper**: Helper functions for dealing with CSS.
 - **Display**: Represents the display area and provides automatic pixel art scaling calculation.
 - **Window**: The bounds of your browser window.
+
+### Artificial Spectrum
+
+_Rendering Routines_
+
+Artificial Spectrum provides powerful supportive objects with rich functionality for many different rendering tasks
+one might require.
