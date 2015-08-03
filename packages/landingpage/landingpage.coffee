@@ -192,10 +192,17 @@ class PixelArtAcademy.LandingPage extends AM.Component
 
       $('.landing-page .intro-section').show()
 
+      @introMusic = $('.landing-page .intro-section .music')[0]
+
     # Start intro after a couple seconds.
       Meteor.setTimeout =>
-        @animateIntro()
-      , 2000
+        @introMusic.play()
+
+        Meteor.setTimeout =>
+          @animateIntro()
+        , 2000
+
+      , 1000
 
     ### Reflection ###
 
@@ -303,7 +310,7 @@ class PixelArtAcademy.LandingPage extends AM.Component
     $('.landing-page .top-section .middle').velocity
       opacity: 1
     ,
-      delay: 19500
+      delay: 21000
       duration: 2000
       easing: 'ease-in-out'
       complete: =>
@@ -311,20 +318,21 @@ class PixelArtAcademy.LandingPage extends AM.Component
           opacity: 1
         ,
           duration: 2000
+          delay: 2000
           easing: 'ease-in-out'
 
     $('.landing-page .intro-section .retronator-presents').velocity
       opacity: 1
     ,
       duration: 2000
-      delay: 1000
+      delay: 800
       easing: 'ease-in-out'
 
     .velocity
       opacity: 0
     ,
       duration: 2000
-      delay: 1000
+      delay: 1300
       easing: 'ease-in-out'
       complete: =>
         $('.landing-page .intro-section .game-by').velocity
@@ -337,7 +345,7 @@ class PixelArtAcademy.LandingPage extends AM.Component
           opacity: 0
         ,
           duration: 2000
-          delay: 1000
+          delay: 1850
           easing: 'ease-in-out'
           complete: =>
             $('.landing-page .intro-section .music-by').velocity
@@ -350,7 +358,7 @@ class PixelArtAcademy.LandingPage extends AM.Component
               opacity: 0
             ,
               duration: 4000
-              delay: 1000
+              delay: 2000
               easing: 'ease-in-out'
 
 
