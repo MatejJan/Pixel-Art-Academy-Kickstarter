@@ -1,6 +1,18 @@
 <template name="PixelArtAcademy.LandingPage">
-  <div class="landing-page {{initializingClass}}">
+  <style>
+    html, body {
+      min-width: 480px;
+      min-height: 360px;
+      background: black;
+      color: white;
+      overflow-x: auto;
+      /* We know that the page will need to scroll, so we force it
+        here for the measurements on the first go to accomodate it. */
+      overflow-y: scroll;
+    }
+  </style>
 
+  <div class="landing-page {{initializingClass}}">
     <div class="top-section parallax-section">
       <div class="top" data-depth="1">
         <hgroup class="title">
@@ -98,17 +110,18 @@
         <p class="retronator-presents"><span class="retronator">Retronator</span> presents</p>
         <p class="title">Pixel Art Academy<span class="author">by Matej 'Retro' Jan</span></p>
         <p class="tagline">
-          A role-playing adventure game<br/>
-          with real-life consequences.
+          An adventure game that<br/>
+          teaches you art.
         </p>
-        <p class="coming-to-kickstarter">Coming to Kickstarter in August 2015!</p>
-        <form class="mailing-list" action="https://tinyletter.com/retronator" method="post" target="popupwindow" onsubmit="window.open('https://tinyletter.com/retronator', 'popupwindow', 'scrollbars=yes,width=800,height=600');return true">
+        <p class="coming-to-kickstarter"><a href="https://www.kickstarter.com/projects/retronator/retronator-pixel-art-academy">Now on Kickstarter!</a></p>
+        <p class="press-link"><a href="/press">Press page</a></p>
+        <!--form class="mailing-list" action="https://tinyletter.com/retronator" method="post" target="popupwindow" onsubmit="window.open('https://tinyletter.com/retronator', 'popupwindow', 'scrollbars=yes,width=800,height=600');return true">
           <p>Be notified:
             <input class="input" type="text" name="email" id="tlemail" placeholder="your email" />
           <input type="hidden" value="1" name="embed"/>
             <input class="submit" type="submit" value="OK" />
           </p>
-        </form>
+        </form-->
       </div>
     </div>
 

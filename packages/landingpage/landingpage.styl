@@ -7,21 +7,6 @@ light-grey = #cacaca
 grey = #b2b2b2
 dark-grey = #929292
 
-html
-body
-  min-width 480px
-  min-height 360px
-  padding 0
-  margin 0
-  background black
-  color white
-  overflow-x auto
-  // We know that the page will need to scroll, so we force it
-  // here for the measurements on the first go to accomodate it.
-  overflow-y scroll
-*
-  box-sizing border-box
-
 .landing-page
   position relative
   color black
@@ -197,6 +182,19 @@ body
         color light-grey
         text-transform uppercase
         margin 2em 0
+
+        a
+          text-decoration underline
+
+          &:hover
+            text-decoration none
+
+      .press-link
+        a
+          color dark-grey
+
+          &:hover
+            color black
 
       .mailing-list
         input:focus

@@ -12,6 +12,7 @@ Package.onUse(function(api) {
 	api.use('stylus');
 
 	api.use('peerlibrary:blaze-components@0.12.0');
+  api.use('iron:router@1.0.9');
 
 	api.use('artificial');
 	api.use('typography');

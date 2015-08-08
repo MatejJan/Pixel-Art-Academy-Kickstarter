@@ -14,11 +14,16 @@ class AB.App
     # TODO: Should this be its own class with enumeration?
     @components = new ReactiveField []
 
-    @components.addComponent = (component) =>
-      @components @components().concat component
+    @components.add = (component) =>
+      components = @components()
+
+      # Don't add a component twice.
+      return if _.contains components, component
+
+      @components components.concat component
       @_addComponent component
 
-    @components.removeComponent = (component) =>
+    @components.remove = (component) =>
       @components _.without @components(), component
       @_removeComponent component
 

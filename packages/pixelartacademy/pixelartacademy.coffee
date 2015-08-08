@@ -5,7 +5,7 @@ class PixelArtAcademy extends Artificial.Base.App
   constructor: ->
     super
 
-    recording = true
+    recording = false
 
     if recording
       @display = new Artificial.Mirage.Display @,
@@ -24,13 +24,35 @@ class PixelArtAcademy extends Artificial.Base.App
         minScale: 2
         minAspectRatio: 2/3
 
-    @components.addComponent @display
+    @components.add @display
 
     @landingPage = new PixelArtAcademy.LandingPage @
-    @components.addComponent @landingPage
+    @pressPage = new PixelArtAcademy.PressPage @
 
     #@pixelScaling = new PixelArtAcademy.PixelScaling @
     #@components.addComponent @pixelScaling
+
+    app = @
+
+    Router.route '/',
+      onStop: ->
+        console.log "Leaving landing page"
+        app.components.remove app.landingPage
+
+      action: ->
+        console.log "Landing page action"
+        app.components.add app.landingPage
+        @render null
+
+    Router.route '/press',
+      onStop: ->
+        console.log "Leaving press page"
+        app.components.remove app.pressPage
+
+      action: ->
+        console.log "Press page action"
+        app.components.add app.pressPage
+        @render null
 
   fontSize: ->
     # 62.5% brings us to 1em = 10px, so we scale all fonts set to their pixel perfect sizes with this.

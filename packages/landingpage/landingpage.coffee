@@ -15,7 +15,7 @@ class PixelArtAcademy.LandingPage extends AM.Component
   bottomSectionHeight = 150
 
   # Run the intro animation.
-  intro = true
+  intro = false
 
   coatOfArmsOffset = -2 if intro
 
@@ -28,7 +28,9 @@ class PixelArtAcademy.LandingPage extends AM.Component
     # Set the initializing flag for the first rendering pass, before we have time to initialize rendered elements.
     @initializingClass = new ReactiveField "initializing"
 
-  initialize: ->
+  onRendered: ->
+    super
+
     # Since focusing moves scroll position in Safari, let's focus right here and scroll to top.
     @focusPrompt()
     $('html').scrollTop(0)

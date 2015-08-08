@@ -1,0 +1,113 @@
+@import "nib"
+@import "../typography/typography.import"
+
+white = #eee
+lighter-grey = #dedede
+light-grey = #cacaca
+grey = #b2b2b2
+dark-grey = #929292
+
+.press-page
+  position relative
+  font-size 16px !important
+  z-index 1
+  padding 2em
+  width 40em
+  min-height 100%
+  margin 0 auto
+  background black
+  uni()
+
+  // Parallax elements
+  *[data-depth]
+    position absolute
+
+  .scene
+    position absolute
+    width 720px
+    right 100%
+    top 0
+    height 650px
+    z-index 0
+    background #a6e2fe
+    overflow hidden
+
+    .water
+      opacity 0.8
+
+  .header
+    margin-bottom 3em
+
+    .retronator-presents
+      margin 0
+
+      .retronator
+        retrotype()
+        color light-grey
+        font-size 1.5em
+
+    .title
+      position relative
+      acme-9-bold()
+      display inline-block
+      margin 0.33333em 0 0.666667em
+      color white
+      font-size 1.5em
+
+      .author
+        position absolute
+        right 1.6em
+        bottom -0.5em
+        uni()
+        color dark-grey
+        font-size 0.66666667em
+
+  h2
+    acme-9-bold()
+    margin-top 2em
+
+  // Link style
+  a
+    position relative
+    padding 0 0.1em 0 0.2em
+    margin 0 -0.1em 0 -0.2em
+    color white
+    cursor pointer
+    text-decoration none
+
+    &:hover
+      background-color white
+      color black
+
+  ul
+    list-style square
+    color grey
+    padding-left 2em
+
+  dl
+    dt
+      color lighter-grey
+
+    dd
+      margin 0 0 1em 2em
+      color grey
+
+      p
+        margin-top 0
+
+      .small-gap
+        margin-bottom 0.2em
+
+      .description
+        position absolute
+        left 50%
+        width 50%
+        color dark-gray
+
+  .images
+    a
+      &:hover
+        background none
+
+    img
+      width 100%
