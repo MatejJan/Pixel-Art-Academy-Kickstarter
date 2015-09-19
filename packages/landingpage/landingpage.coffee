@@ -509,8 +509,8 @@ class PixelArtAcademy.LandingPage extends AM.Component
     if @hasScrolled
       @hasScrolled = false
 
-      scrollLeft = if @supportPageOffset then window.pageXOffset else if isCSS1Compat then document.documentElement.scrollLeft else document.body.scrollLeft
-      scrollTop = if @supportPageOffset then window.pageYOffset else if isCSS1Compat then document.documentElement.scrollTop else document.body.scrollTop
+      scrollLeft = if @supportPageOffset then window.pageXOffset else if @isCSS1Compat then document.documentElement.scrollLeft else document.body.scrollLeft
+      scrollTop = if @supportPageOffset then window.pageYOffset else if @isCSS1Compat then document.documentElement.scrollTop else document.body.scrollTop
       @topScrollDelta = scrollTop - @topParallaxOrigin
       @middleScrollDelta = scrollTop - @middleParallaxOrigin
 

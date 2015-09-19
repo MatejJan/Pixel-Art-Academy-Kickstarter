@@ -18,18 +18,13 @@ class PixelArtAcademy.PressPage extends AM.Component
   constructor: (@pixelArtAcademy) ->
     super
 
-    console.log "press constructor"
-
   onCreated: ->
     super
-    console.log "press created"
 
     # Set the initializing flag for the first rendering pass, before we have time to initialize rendered elements.
     @initializingClass = new ReactiveField "initializing"
 
   onRendered: ->
-    console.log "press rendered"
-
     $('html').scrollTop(0)
 
     @display = @pixelArtAcademy.services.getService AM.Display

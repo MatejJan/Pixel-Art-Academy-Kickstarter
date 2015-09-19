@@ -36,21 +36,17 @@ class PixelArtAcademy extends Artificial.Base.App
 
     Router.route '/',
       onStop: ->
-        console.log "Leaving landing page"
         app.components.remove app.landingPage
 
       action: ->
-        console.log "Landing page action"
         app.components.add app.landingPage
         @render null
 
     Router.route '/press',
       onStop: ->
-        console.log "Leaving press page"
         app.components.remove app.pressPage
 
       action: ->
-        console.log "Press page action"
         app.components.add app.pressPage
         @render null
 
